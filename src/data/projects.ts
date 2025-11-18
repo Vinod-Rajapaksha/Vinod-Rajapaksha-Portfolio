@@ -5,6 +5,7 @@ export const projects = [
     tech: ["React", "Express.js", "Node.js","MongoDB"],
     demoUrl: "https://www.linkedin.com/posts/vinod-rajapaksha_mern-fullstackdeveloper-reactjs-activity-7347814142122016768-1cX-?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEWTQhABlCL5huTssw4TKtfEz7DeRMoYJmo",
     codeUrl: "https://github.com/Vinod-Rajapaksha/Employee-Management-System",
+    image: "",
   },
   {
     title: "AI-Powered Job Recommendation System",
@@ -12,6 +13,7 @@ export const projects = [
     tech: ["Angular", "Spring Boot", "PostgreSQL","Tailwind CSS"],
     demoUrl: "https://www.linkedin.com/in/vinod-rajapaksha/",
     codeUrl: "https://github.com/Vinod-Rajapaksha/AI-powered-Job-Recommendation-System",
+    image: "",
   },
   {
     title: "Tourism-and-Travel-Management-System",
@@ -19,6 +21,7 @@ export const projects = [
     tech: ["React", "Spring Boot", "Microsoft SQL Server"],
     demoUrl: "https://github.com/Vinod-Rajapaksha/Tourism-and-Travel-Management-System",
     codeUrl: "https://github.com/Vinod-Rajapaksha/Tourism-and-Travel-Management-System",
+    image: "",
   },
   {
     title: "Food-Ordering-System",
@@ -26,5 +29,6 @@ export const projects = [
     tech: ["JSP", "Java", "Tomcat", "MySQL"],
     demoUrl: "https://github.com/Vinod-Rajapaksha/Food-Ordering-System",
     codeUrl: "https://github.com/Vinod-Rajapaksha/Food-Ordering-System",
+    image: "",
   },
 ];
