@@ -1,12 +1,16 @@
 import Navbar from "./components/Navbar";
+import ElasticCursor from "./components/ElasticCursor";
 import Hero from "./components/sections/Hero";
 import About from "./components/sections/About";
 import Projects from "./components/sections/Projects";
 import Contact from "./components/sections/Contact";
+import Preloader from "./components/preloader/preloader";
 
 function App() {
   return (
+    <Preloader>
     <div className="bg-slate-950 text-slate-100 min-h-screen">
+      <ElasticCursor />
       <Navbar />
       <main>
         <Hero />
@@ -18,6 +22,7 @@ function App() {
         © {new Date().getFullYear()} Vinod Rajapaksha. All rights reserved.
       </footer>
     </div>
+    </Preloader>
   );
 }
 
