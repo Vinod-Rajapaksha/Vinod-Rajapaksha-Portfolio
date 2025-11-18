@@ -14,7 +14,7 @@ const About = () => {
         </p>
         <h3 className="mt-8 mb-3 font-medium text-slate-200">Tech Stack</h3>
         <div className="flex flex-wrap gap-2 text-sm">
-          {["JavaScript", "TypeScript", "React", "Vite", "Tailwind", "Node.js", "Express", "MongoDB"].map(
+          {["JavaScript", "TypeScript", "React", "Vite", "Tailwind", "Node.js", "Express", "Python", "Java", "Spring Boot", "MongoDB", "SQL"].map(
             (tech) => (
               <span
                 key={tech}
