@@ -2,6 +2,7 @@ import Navbar from "./components/Navbar";
 import ElasticCursor from "./components/ElasticCursor";
 import Hero from "./components/sections/Hero";
 import About from "./components/sections/About";
+import Tech from "./components/sections/Tech";
 import Projects from "./components/sections/Projects";
 import Contact from "./components/sections/Contact";
 import Preloader from "./components/preloader/preloader";
@@ -15,6 +16,7 @@ function App() {
       <main>
         <Hero />
         <About />
+        <Tech />
         <Projects />
         <Contact />
       </main>
