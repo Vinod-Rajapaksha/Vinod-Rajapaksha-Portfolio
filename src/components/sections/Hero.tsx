@@ -38,7 +38,7 @@ const Hero = () => {
 
           {/* Stats */}
           <div className="flex justify-center lg:justify-start gap-4 md:gap-6 lg:gap-8 pt-2 md:pt-4 flex-wrap">
-            {['3+ Years', '50+ Projects', '95% Client'].map((stat, index) => (
+            {['5+ Years', '20+ Projects', '15+ Technologies', '4+ Frameworks'].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-lg sm:text-xl md:text-2xl font-bold text-cyan-400">{stat.split(' ')[0]}</div>
                 <div className="text-xs text-slate-400 mt-0.5">{stat.split(' ').slice(1).join(' ')}</div>
