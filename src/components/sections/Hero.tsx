@@ -6,7 +6,7 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 flex items-center relative overflow-hidden"
+      className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 flex items-center relative overflow-hidden py-8"
     >
       {/* Particle Background */}
       <div className="absolute inset-0 -z-10">
@@ -15,74 +15,51 @@ const Hero = () => {
         </Canvas>
       </div>
 
-      
       {/* Animated Gradient Orbs */}
-      <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div className="absolute top-4 left-4 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl animate-pulse sm:top-10 sm:left-10 sm:w-48 sm:h-48 md:top-20 md:left-20 md:w-72 md:h-72"></div>
+      <div className="absolute bottom-4 right-4 w-40 h-40 bg-blue-500/10 rounded-full blur-2xl animate-pulse delay-1000 sm:bottom-10 sm:right-10 sm:w-64 sm:h-64 md:bottom-20 md:right-20 md:w-96 md:h-96"></div>
 
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-16 flex flex-col md:flex-row items-center gap-16 relative z-10">
-        {/* Left: Enhanced Text Content */}
-        <div className="flex-1 space-y-6">
-
-          <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-            <span className="bg-gradient-to-r from-slate-100 to-slate-400 bg-clip-text text-transparent">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-8 flex flex-col md:flex-row items-center gap-8 md:gap-12 lg:gap-16 relative z-10 w-full">
+        {/* Left: Text Content */}
+        <div className="flex-1 space-y-3 md:space-y-4 lg:space-y-6 text-center lg:text-left w-full flex flex-col justify-center">
+          <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-5.5xl xl:text-6xl font-bold leading-tight md:leading-tighter">
+            <span className="bg-gradient-to-r from-slate-100 to-slate-400 bg-clip-text text-transparent block">
               Hi, I'm
             </span>
-            <br />
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent animate-gradient">
+            <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent animate-gradient block mt-1 md:mt-2">
               Vinod Rajapaksha
             </span>
           </h1>
 
-          <p className="text-xl text-slate-300 max-w-2xl leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0">
             Crafting <span className="text-cyan-400 font-semibold">Full-Stack Web Apps & Mobile Solutions </span> 
-            powered by modern technologies. From intuitive interfaces to scalable backend systems, I bring ideas to life with React, MERN, and Java ecosystems.
+            powered by modern technologies. From intuitive interfaces to scalable backend systems.
           </p>
 
-          {/* <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <a
-              href="#projects"
-              className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-xl font-medium transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/25 flex items-center gap-2"
-            >
-              <span>View My Work</span>
-              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </a>
-            
-            <a
-              href="#contact"
-              className="group px-8 py-4 border border-slate-600 hover:border-cyan-400 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
-            >
-              <span>Get In Touch</span>
-              <svg className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-            </a>
-          </div> */}
-
           {/* Stats */}
-          <div className="flex gap-8 pt-8">
+          <div className="flex justify-center lg:justify-start gap-4 md:gap-6 lg:gap-8 pt-2 md:pt-4 flex-wrap">
             {['3+ Years', '50+ Projects', '95% Client'].map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-2xl font-bold text-cyan-400">{stat.split(' ')[0]}</div>
-                <div className="text-sm text-slate-400">{stat.split(' ').slice(1).join(' ')}</div>
+                <div className="text-lg sm:text-xl md:text-2xl font-bold text-cyan-400">{stat.split(' ')[0]}</div>
+                <div className="text-xs text-slate-400 mt-0.5">{stat.split(' ').slice(1).join(' ')}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Right: Enhanced 3D Model Container */}
-        <div className="flex-1 w-full h-[400px] sm:h-[500px] md:h-[600px] relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 rounded-3xl border border-slate-700/50 backdrop-blur-sm"></div>
-          <ComputersCanvas />
+        {/* Right: 3D Model Container */}
+        <div className="flex-1 w-full max-w-md lg:max-w-lg xl:max-w-xl flex items-center justify-center">
+          <div className="relative w-full aspect-square max-h-[250px] sm:max-h-[300px] md:max-h-[350px] lg:max-h-[400px] xl:max-h-[400px]">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 rounded-3xl border border-slate-700/50 backdrop-blur-sm"></div>
+            <ComputersCanvas />
+          </div>
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-slate-400 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-slate-400 rounded-full mt-2 animate-pulse"></div>
+      {/* Scroll Indicator - Only show when there's enough space */}
+      <div className="absolute bottom-2 sm:bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce hidden sm:block">
+        <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-slate-400 rounded-full flex justify-center">
+          <div className="w-1 h-2 sm:h-3 bg-slate-400 rounded-full mt-1.5 sm:mt-2 animate-pulse"></div>
         </div>
       </div>
     </section>

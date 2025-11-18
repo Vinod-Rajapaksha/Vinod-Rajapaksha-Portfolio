@@ -41,3 +41,18 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(to bottom, #06b6d4, #2563eb);
 }
+
+/* smooth height transitions */
+@media (max-height: 600px) {
+  .min-h-screen {
+    min-height: 600px;
+  }
+}
+
+/* Extra small screen optimizations */
+@media (max-width: 375px) {
+  .text-3xl {
+    font-size: 1.75rem;
+    line-height: 2.25rem;
+  }
+}
