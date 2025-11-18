@@ -6,7 +6,7 @@ It showcases my skills, projects, and experience in an interactive and visually 
 ---
 
 ## 🌐 Live Demo
-👉 **Hosted on Vercel:** *Add your live link here*
+**Hosted on Vercel:** *[Click Here](https://vinod-rajapaksha.vercel.app/)*
 
 ---
 
