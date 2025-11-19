@@ -1,3 +1,4 @@
+import { ScrollProvider } from './contexts/ScrollContext';
 import Navbar from "./components/Navbar";
 import ElasticCursor from "./components/ElasticCursor";
 import Hero from "./components/sections/Hero";
@@ -10,6 +11,7 @@ import Preloader from "./components/preloader/preloader";
 function App() {
   return (
     <Preloader>
+    <ScrollProvider>
     <div className="bg-slate-950 text-slate-100 min-h-screen">
       <ElasticCursor />
       <Navbar />
@@ -24,6 +26,7 @@ function App() {
         © {new Date().getFullYear()} Vinod Rajapaksha. All rights reserved.
       </footer>
     </div>
+    </ScrollProvider>
     </Preloader>
   );
 }
