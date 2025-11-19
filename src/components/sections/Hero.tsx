@@ -170,19 +170,18 @@ const Hero = () => {
       </motion.div>
 
       {/* Scroll Indicator */}
-      <motion.div 
-        className="absolute bottom-2 sm:bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 hidden sm:block"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-slate-400 rounded-full flex justify-center">
-          <motion.div 
-            className="w-1 h-2 sm:h-3 bg-slate-400 rounded-full mt-1.5 sm:mt-2"
-            animate={{ opacity: [1, 0.3, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-          ></motion.div>
+      <div className="xs:bottom-10 absolute bottom-25 right-5 flex w-full items-center justify-center z-20">
+      <a href="#about">
+        <div className="border-cyan-400 flex h-[64px] w-[35px] items-start justify-center rounded-3xl border-4 p-2">
+          <motion.div
+            animate={{ y: [0, 24, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop" }}
+            className="bg-cyan-400 mb-1 h-3 w-3 rounded-full"
+          />
         </div>
-      </motion.div>
+      </a>
+      </div>
+
     </section>
   );
 };
