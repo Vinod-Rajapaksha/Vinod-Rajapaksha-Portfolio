@@ -4,6 +4,8 @@ import React, { Suspense, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Preload, useGLTF, Float } from "@react-three/drei";
 
+import CanvasLoader from "../layout/Loader";
+
 const Computers: React.FC<{ isMobile: boolean }> = ({ isMobile }) => {
   const computer = useGLTF("/desktop_pc/scene.gltf");
 
@@ -58,7 +60,7 @@ const ComputersCanvas: React.FC = () => {
       }}
       className="rounded-3xl"
     >
-      <Suspense fallback={null}>
+      <Suspense fallback={<CanvasLoader />}>
         <OrbitControls
           enablePan={false}
           enableZoom={false}
