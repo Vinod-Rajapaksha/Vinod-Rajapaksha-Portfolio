@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import ComputersCanvas from "../canvas/Computers";
 import ParticleBackground from "../ParticleBackground";
@@ -33,6 +33,10 @@ const Hero = () => {
       }
     }
   };
+
+  const { scrollYProgress } = useScroll();
+
+  const indicatorOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
 
   return (
     <section
@@ -170,18 +174,20 @@ const Hero = () => {
       </motion.div>
 
       {/* Scroll Indicator */}
-      <div className="xs:bottom-10 absolute bottom-25 right-5 flex w-full items-center justify-center z-20">
-      <a href="#about">
-        <div className="border-cyan-400 flex h-[64px] w-[35px] items-start justify-center rounded-3xl border-4 p-2">
-          <motion.div
-            animate={{ y: [0, 24, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop" }}
-            className="bg-cyan-400 mb-1 h-3 w-3 rounded-full"
-          />
-        </div>
-      </a>
-      </div>
-
+      <motion.div 
+        style={{ opacity: indicatorOpacity }}
+        className="xs:bottom-10 absolute bottom-25 flex w-full items-center justify-center z-20"
+      >
+        <a href="#about">
+          <div className="border-cyan-400 flex h-[64px] w-[35px] items-start justify-center rounded-3xl border-4 p-2">
+            <motion.div
+              animate={{ y: [0, 24, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop" }}
+              className="bg-cyan-400 mb-1 h-3 w-3 rounded-full"
+            />
+          </div>
+        </a>
+      </motion.div>
     </section>
   );
 };
