@@ -1,5 +1,3 @@
-"use client";
-
 import React, { Suspense, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Preload, useGLTF, Float } from "@react-three/drei";
@@ -26,7 +24,7 @@ const Computers: React.FC<{ isMobile: boolean }> = ({ isMobile }) => {
 
       <primitive
         object={computer.scene}
-        scale={isMobile ? 0.5 : 0.65}
+        scale={0.8}
         position={isMobile ? [0, -2.5, -1.5] : [0, -3.5, -1]}
         rotation={[-0.01, -0.2, -0.05]}
       />
