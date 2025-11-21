@@ -18,11 +18,12 @@ import {
   Send,
   Sparkles,
   Zap,
+  Crown,
 } from "lucide-react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../lib/utils";
-import { useChat, type ChatUser } from "../../contexts/ChatContext";
+import { useChat, type ChatUser, OWNER_ID, useOwner } from "../../contexts/ChatContext";
 
 // Main Component
 const OnlineUsers = () => {
@@ -35,6 +36,8 @@ const OnlineUsers = () => {
     typingUsers,
     setTyping,
   } = useChat();
+
+  const isOwner = useOwner(currentUserId);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -322,6 +325,14 @@ const OnlineUsers = () => {
                                 isMe ? "text-cyan-100" : "text-slate-300"
                               )}>
                                 {m.username}
+                                {isOwner && m.userId === currentUserId && (
+                                <div className="flex items-center gap-1 ml-1">
+                                    <Crown className="w-3 h-3 text-yellow-400" />
+                                    <span className="text-[10px] bg-yellow-400 text-black px-1 rounded">
+                                      OWNER
+                                    </span>
+                                  </div>
+                                )}
                                 {isMe && (
                                   <motion.span
                                     initial={{ opacity: 0 }}
@@ -521,6 +532,11 @@ const UserItem = ({
               <div className="flex items-center gap-2">
                 <span className="font-semibold text-slate-200 text-sm">
                   {user.name}
+                  {user.id === OWNER_ID && (
+                    <span className="ml-1 px-2 py-0.5 bg-yellow-400 text-black rounded text-xs font-semibold">
+                      OWNER
+                    </span>
+                  )}
                 </span>
                 {isCurrent && (
                   <motion.span

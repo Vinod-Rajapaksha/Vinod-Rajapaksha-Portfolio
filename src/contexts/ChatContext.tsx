@@ -44,6 +44,12 @@ export type TypingState = {
   name: string;
 };
 
+const OWNER_ID = "1ac611ae-53d2-47f6-89f0-23d1f8d765ba";
+
+const useOwner = (currentUserId: string) => {
+return currentUserId === OWNER_ID;
+};
+
 type ChatContextType = {
   currentUserId: string;
   username: string;
@@ -54,6 +60,7 @@ type ChatContextType = {
   updateUsername: (newName: string) => Promise<void>;
   sendMessage: (text: string) => Promise<void>;
   setTyping: (isTyping: boolean) => void;
+  isOwner: boolean;
 };
 
 // Context 
@@ -124,6 +131,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [users, setUsers] = useState<ChatUser[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [typingUsers, setTypingUsers] = useState<TypingState[]>([]);
+
+  const isOwner = useOwner(currentUserId);
 
   // timeout ref for typing auto-clear
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -309,6 +318,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         updateUsername,
         sendMessage,
         setTyping,
+        isOwner,   
       }}
     >
       {children}
@@ -322,3 +332,5 @@ export const useChat = () => {
   if (!ctx) throw new Error("useChat must be used inside ChatProvider");
   return ctx;
 };
+
+export { OWNER_ID, useOwner };
