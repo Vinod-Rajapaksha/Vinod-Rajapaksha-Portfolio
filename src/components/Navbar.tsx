@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import OnlineUsers from "../components/chat/OnlineUsers";
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -37,6 +38,7 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex gap-6 lg:gap-8 items-center">
+            <OnlineUsers />
             {navItems.map((item) => (
               <a
                 key={item}
@@ -56,28 +58,31 @@ const Navbar: React.FC = () => {
               Let&apos;s Talk
             </a>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden relative w-8 h-8 flex flex-col justify-center items-center z-60"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            <span
-              className={`w-6 h-0.5 bg-slate-100 transition-all duration-300 ${
-                isMobileMenuOpen ? "rotate-45 translate-y-1" : "-translate-y-1"
-              }`}
-            />
-            <span
-              className={`w-6 h-0.5 bg-slate-100 transition-all duration-300 ${
-                isMobileMenuOpen ? "opacity-0" : "opacity-100"
-              }`}
-            />
-            <span
-              className={`w-6 h-0.5 bg-slate-100 transition-all duration-300 ${
-                isMobileMenuOpen ? "-rotate-45 -translate-y-1" : "translate-y-1"
-              }`}
-            />
-          </button>
+          
+          <div className="flex md:hidden items-center gap-3">
+            <OnlineUsers />
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden relative w-8 h-8 flex flex-col justify-center items-center z-60"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              <span
+                className={`w-6 h-0.5 bg-slate-100 transition-all duration-300 ${
+                  isMobileMenuOpen ? "rotate-45 translate-y-1" : "-translate-y-1"
+                }`}
+              />
+              <span
+                className={`w-6 h-0.5 bg-slate-100 transition-all duration-300 ${
+                  isMobileMenuOpen ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              <span
+                className={`w-6 h-0.5 bg-slate-100 transition-all duration-300 ${
+                  isMobileMenuOpen ? "-rotate-45 -translate-y-1" : "translate-y-1"
+                }`}
+              />
+            </button>
+          </div>
         </nav>
       </header>
 
