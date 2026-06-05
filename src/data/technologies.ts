@@ -10,7 +10,7 @@ import mongodb from "../assets/tech/mongodb.png";
 import git from "../assets/tech/git.png";
 import figma from "../assets/tech/figma.png";
 import docker from "../assets/tech/docker.png";
-import threejs from "../assets/tech/threejs.svg";
+import threejs from "../assets/tech/threejs.png";
 
 export const technologies = [
   {
