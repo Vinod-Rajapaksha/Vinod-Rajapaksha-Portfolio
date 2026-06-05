@@ -21,12 +21,14 @@ import {
   type QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import { OWNER_ID } from "../config/chat";
 
 // Types 
 export type ChatUser = {
   id: string;
   name: string;
   color: string;
+  lastSeen?: Date | null;
 };
 
 export type ChatMessage = {
@@ -43,8 +45,6 @@ export type TypingState = {
   userId: string;
   name: string;
 };
-
-const OWNER_ID = "1ac611ae-53d2-47f6-89f0-23d1f8d765ba";
 
 const useOwner = (currentUserId: string) => {
 return currentUserId === OWNER_ID;
@@ -169,32 +169,81 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [currentUserId, username, color]);
 
-  // Presence listener
+  // Portfolio activity heartbeat
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    const presenceRef = doc(db, "presence", currentUserId);
+
+    const interval = setInterval(() => {
+      updateDoc(presenceRef, {
+        lastSeen: serverTimestamp(),
+      }).catch(() => {});
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [currentUserId]);
+
+  // Presence listener + stale cleanup
   useEffect(() => {
     const col = collection(db, "presence");
 
     const unsub = onSnapshot(col, (snap) => {
-      const list = snap.docs.map((d) => {
+      const now = Date.now();
+
+      const ONLINE_LIMIT = 60 * 1000; // 1 minute
+
+      const list: ChatUser[] = [];
+
+      snap.docs.forEach((d) => {
         const data = d.data();
-        return {
+
+        const lastSeen = data.lastSeen?.toDate() ?? null;
+
+        // Delete stale users after 5 minutes
+        if (
+          lastSeen &&
+          now - lastSeen.getTime() > 5 * 60 * 1000
+        ) {
+          if (isOwner) {
+            deleteDoc(d.ref).catch(() => {});
+          }
+          return;
+        }
+
+        // Only show users active in last minute
+        const active =
+          lastSeen &&
+          now - lastSeen.getTime() <= ONLINE_LIMIT;
+
+        if (!active) {
+          return;
+        }
+
+        list.push({
           id: d.id,
           name: data.name ?? "Unknown",
           color: data.color ?? "#777777",
-        };
+          lastSeen,
+        });
       });
+
       setUsers(list);
     });
 
     return () => unsub();
-  }, []);
+  }, [isOwner]);
 
-  // Messages listener
+  // Messages listener + Auto-cleanup for 24hr old messages
   useEffect(() => {
     const q = query(collection(db, "messages"), orderBy("timestamp", "asc"));
 
     const unsub = onSnapshot(q, (snap) => {
-      const list: ChatMessage[] = snap.docs.map(
-        (d: QueryDocumentSnapshot<DocumentData>) => {
+      const now = new Date();
+      const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+      const list: ChatMessage[] = snap.docs
+        .map((d: QueryDocumentSnapshot<DocumentData>) => {
           const data = d.data();
           return {
             id: d.id,
@@ -205,8 +254,18 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             timestamp: data.timestamp?.toDate() ?? null,
             readBy: Array.isArray(data.readBy) ? data.readBy : [],
           };
+        })
+        .filter((msg) => !msg.timestamp || msg.timestamp > twentyFourHoursAgo);
+
+      // Delete old messages (24+ hours)
+      snap.docs.forEach((d) => {
+        const data = d.data();
+        const msgTimestamp = data.timestamp?.toDate() ?? null;
+        if (msgTimestamp && msgTimestamp <= twentyFourHoursAgo) {
+          deleteDoc(d.ref).catch(() => {});
         }
-      );
+      });
+
       setMessages(list);
 
       // auto-mark all as read for current user
@@ -215,7 +274,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           const msgRef = doc(db, "messages", msg.id);
           await updateDoc(msgRef, {
             readBy: [...msg.readBy, currentUserId],
-          });
+          }).catch(() => {});
         }
       });
     });
