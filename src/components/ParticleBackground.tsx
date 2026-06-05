@@ -11,7 +11,7 @@ const ParticleBackground: React.FC = () => {
 
   const sphere = useMemo(
     () =>
-      random.inSphere(new Float32Array(5000), { radius: 1.5 }) as Float32Array,
+      random.inSphere(new Float32Array(5000 * 3), { radius: 1.5 }) as Float32Array,
     []
   );
 
