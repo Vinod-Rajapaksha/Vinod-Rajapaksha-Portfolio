@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Button } from "../ui/button";
 import {
   Popover,
@@ -11,8 +11,6 @@ import { ScrollArea } from "../ui/scroll-area";
 
 import {
   Check,
-  Edit,
-  X,
   MessageCircle,
   Users,
   Send,
@@ -23,9 +21,9 @@ import {
 
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../lib/utils";
-import { useChat, type ChatUser, OWNER_ID, useOwner } from "../../contexts/ChatContext";
+import { useChat, OWNER_ID } from "../../contexts/ChatContext";
+import UserItem from "./UserItem";
 
-// Main Component
 const OnlineUsers = () => {
   const {
     users,
@@ -37,12 +35,13 @@ const OnlineUsers = () => {
     setTyping,
   } = useChat();
 
-  const isOwner = useOwner(currentUserId);
-
   const inputRef = useRef<HTMLInputElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
+  const [isSending, setIsSending] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
   const usersCount = users.length;
 
@@ -51,26 +50,64 @@ const OnlineUsers = () => {
     (m) => !m.readBy.includes(currentUserId) && m.userId !== currentUserId
   ).length;
 
-  // Auto scroll
-  const scrollToBottom = () => {
-    const t = setTimeout(() => {
-      if (chatContainerRef.current) {
+  // Auto scroll with manual scroll detection
+  const scrollToBottom = useCallback(() => {
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+
+    scrollTimeoutRef.current = setTimeout(() => {
+      if (chatContainerRef.current && shouldAutoScroll) {
         chatContainerRef.current.scrollTop =
           chatContainerRef.current.scrollHeight;
       }
-      clearTimeout(t);
-    }, 30);
+    }, 50);
+  }, [shouldAutoScroll]);
+
+  // Handle manual scroll
+  const handleScroll = () => {
+    if (!chatContainerRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+
+    setShouldAutoScroll(isNearBottom);
   };
 
-  useEffect(scrollToBottom, [messages]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, shouldAutoScroll, scrollToBottom]);
 
-  // Send Message
-  const handleSendMessage = () => {
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Send Message with error handling
+  const handleSendMessage = async () => {
     const value = inputRef.current?.value || "";
     if (!value.trim()) return;
 
-    void sendMessage(value.trim());
-    inputRef.current!.value = "";
+    setIsSending(true);
+    setErrorMsg("");
+
+    try {
+      await sendMessage(value.trim());
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
+      setShouldAutoScroll(true);
+      scrollToBottom();
+    } catch (error) {
+      setErrorMsg(
+        error instanceof Error ? error.message : "Failed to send message"
+      );
+    } finally {
+      setIsSending(false);
+    }
   };
 
   // Message animation variants
@@ -96,7 +133,13 @@ const OnlineUsers = () => {
     return `${names.slice(0, 3).join(", ")}${names.length > 3 ? "…" : ""} are typing…`;
   })();
 
-  // RENDER
+  //sort users to show owner on top
+  const sortedUsers = [...users].sort((a, b) => {
+  if (a.id === OWNER_ID) return -1;
+  if (b.id === OWNER_ID) return 1;
+  return 0;
+  });
+
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
@@ -206,40 +249,42 @@ const OnlineUsers = () => {
             </div>
 
             {/* USERS TAB */}
-            <TabsContent value="users" className="flex-1 overflow-auto m-0">
-              <ScrollArea className="h-full p-4">
+            <TabsContent value="users"   className="flex flex-col flex-1 overflow-hidden m-0">
+              {/* Header */}
+              <div className="p-4 text-center space-y-3">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg"
+                >
+                  <Users className="w-7 h-7 text-white" />
+                </motion.div>
+                <div>
+                  <h3 className="font-bold text-xl bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                    Online Users
+                  </h3>
+                  <motion.p 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-sm text-slate-400 mt-1"
+                  >
+                    {usersCount} user{usersCount === 1 ? "" : "s"} connected
+                  </motion.p>
+                </div>
+              </div>
+              <ScrollArea 
+                className="flex-1 p-4 overscroll-contain"
+                onWheel={(e) => e.stopPropagation()}
+              >
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-4"
                 >
-                  {/* Header */}
-                  <div className="text-center space-y-3">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg"
-                    >
-                      <Users className="w-7 h-7 text-white" />
-                    </motion.div>
-                    <div>
-                      <h3 className="font-bold text-xl bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                        Online Users
-                      </h3>
-                      <motion.p 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                        className="text-sm text-slate-400 mt-1"
-                      >
-                        {usersCount} user{usersCount === 1 ? "" : "s"} connected
-                      </motion.p>
-                    </div>
-                  </div>
-
                   {/* User List */}
                   <div className="grid gap-3">
-                    {users.map((u, index) => (
+                    {sortedUsers.map((u, index) => (
                       <motion.div
                         key={u.id}
                         initial={{ opacity: 0, x: -20 }}
@@ -273,7 +318,12 @@ const OnlineUsers = () => {
             <TabsContent value="chat" className="flex-1 flex flex-col overflow-hidden m-0">
               
               {/* Messages Area */}
-              <ScrollArea className="flex-1 p-4" ref={chatContainerRef}>
+              <div 
+                className="flex-1 overflow-y-auto p-4 overscroll-contain bg-gradient-to-b from-slate-900/50 to-slate-800/30" 
+                ref={chatContainerRef}
+                onScroll={handleScroll}
+                onWheel={(e) => e.stopPropagation()}
+              >
                 <AnimatePresence initial={false}>
                   {messages.length === 0 ? (
                     <motion.div
@@ -320,24 +370,28 @@ const OnlineUsers = () => {
                                 className="w-3 h-3 rounded-full shadow-sm"
                                 style={{ backgroundColor: m.color }}
                               />
-                              <span className={cn(
-                                "font-semibold text-sm",
-                                isMe ? "text-cyan-100" : "text-slate-300"
-                              )}>
+                              <span
+                                className={cn(
+                                  "font-semibold text-sm flex items-center gap-1",
+                                  isMe ? "text-cyan-100" : "text-slate-300"
+                                )}
+                              >
                                 {m.username}
-                                {isOwner && m.userId === currentUserId && (
-                                <div className="flex items-center gap-1 ml-1">
+
+                                {m.userId === OWNER_ID && (
+                                  <>
                                     <Crown className="w-3 h-3 text-yellow-400" />
                                     <span className="text-[10px] bg-yellow-400 text-black px-1 rounded">
                                       OWNER
                                     </span>
-                                  </div>
+                                  </>
                                 )}
+
                                 {isMe && (
                                   <motion.span
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    className="ml-1 text-cyan-200"
+                                    className="text-cyan-200"
                                   >
                                     (You)
                                   </motion.span>
@@ -346,35 +400,37 @@ const OnlineUsers = () => {
                             </div>
 
                             {/* Message Text */}
-                            <p className="text-sm leading-relaxed break-words">
+                            <p className="text-sm leading-relaxed break-words mb-2">
                               {m.text}
                             </p>
 
-                            {/* Footer */}
-                            <div className="flex items-center justify-between mt-2 text-xs opacity-80">
-                              {m.timestamp && (
-                                <span className={cn(
-                                  isMe ? "text-cyan-200" : "text-slate-400"
-                                )}>
-                                  {new Date(m.timestamp).toLocaleTimeString([], {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                  })}
-                                </span>
-                              )}
+                            {/* Footer with timestamp and read status */}
+                            <div className="flex items-center justify-between gap-2 text-xs opacity-75">
+                              <div className="flex items-center gap-1">
+                                {m.timestamp && (
+                                  <span className={cn(
+                                    isMe ? "text-cyan-100/70" : "text-slate-400/70"
+                                  )}>
+                                    {new Date(m.timestamp).toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })}
+                                  </span>
+                                )}
+                              </div>
 
                               {isMe && (
                                 <motion.span
                                   whileHover={{ scale: 1.1 }}
                                   className={cn(
-                                    "flex items-center gap-1",
-                                    everyoneRead ? "text-green-300" : "text-cyan-200"
+                                    "flex items-center gap-0.5 ml-auto",
+                                    everyoneRead ? "text-green-300" : "text-cyan-100/70"
                                   )}
                                 >
                                   {everyoneRead ? (
                                     <>
                                       <Check className="w-3 h-3" />
-                                      <Check className="w-3 h-3 -ml-2" />
+                                      <Check className="w-3 h-3 -ml-1.5" />
                                     </>
                                   ) : (
                                     <Check className="w-3 h-3" />
@@ -388,7 +444,7 @@ const OnlineUsers = () => {
                     </div>
                   )}
                 </AnimatePresence>
-              </ScrollArea>
+              </div>
 
               {/* Typing Indicator */}
               <AnimatePresence>
@@ -422,25 +478,52 @@ const OnlineUsers = () => {
               </AnimatePresence>
 
               {/* Input Area */}
-              <div className="p-4 border-t border-slate-700/50 bg-slate-900/50 backdrop-blur-lg">
+              <div className="border-t border-slate-700/50 bg-gradient-to-t from-slate-900/80 to-slate-800/50 backdrop-blur-lg p-4 space-y-2">
+                {errorMsg && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="px-3 py-2 bg-red-500/10 border border-red-500/30 rounded-lg text-xs text-red-300 flex items-center gap-2"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                    {errorMsg}
+                  </motion.div>
+                )}
+
                 <div className="flex items-center gap-2">
                   <Input
                     ref={inputRef}
-                    className="rounded-2xl border-2 border-slate-600/50 focus:border-cyan-400 transition-all duration-300 bg-slate-800/80 text-slate-200 placeholder-slate-400 shadow-sm h-11"
+                    className="rounded-2xl border-2 border-slate-600/50 focus:border-cyan-400 transition-all duration-300 bg-slate-800/80 text-slate-200 placeholder-slate-400 shadow-sm h-11 disabled:opacity-50"
                     placeholder={`Message as ${username}…`}
                     onChange={() => setTyping(true)}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") handleSendMessage();
+                      if (e.key === "Enter" && !isSending) handleSendMessage();
                     }}
+                    disabled={isSending}
                   />
 
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <motion.div 
+                    whileHover={!isSending ? { scale: 1.05 } : {}} 
+                    whileTap={!isSending ? { scale: 0.95 } : {}}
+                  >
                     <Button
                       size="icon"
                       onClick={handleSendMessage}
-                      className="rounded-2xl w-11 h-11 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 shadow-lg border-0"
+                      disabled={isSending}
+                      className="rounded-2xl w-11 h-11 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 shadow-lg border-0 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Send className="w-4 h-4" />
+                      {isSending ? (
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity }}
+                          className="w-4 h-4"
+                        >
+                          <Zap className="w-4 h-4" />
+                        </motion.div>
+                      ) : (
+                        <Send className="w-4 h-4" />
+                      )}
                     </Button>
                   </motion.div>
                 </div>
@@ -448,7 +531,7 @@ const OnlineUsers = () => {
                 <motion.p 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="text-center text-xs text-slate-400 mt-2 flex items-center justify-center gap-1"
+                  className="text-center text-xs text-slate-400 flex items-center justify-center gap-1"
                 >
                   <Zap className="w-3 h-3" />
                   Press Enter to send • Connected as {username}
@@ -464,143 +547,3 @@ const OnlineUsers = () => {
 };
 
 export default OnlineUsers;
-
-// USER ITEM COMPONENT
-const UserItem = ({
-  user,
-  isCurrent,
-}: {
-  user: ChatUser;
-  isCurrent: boolean;
-}) => {
-  const { updateUsername } = useChat();
-  const [editing, setEditing] = useState(false);
-  const [newName, setNewName] = useState(user.name);
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (editing) {
-      inputRef.current?.focus();
-      inputRef.current?.select();
-    }
-  }, [editing]);
-
-  const saveEdit = async () => {
-    if (!newName.trim()) return;
-    await updateUsername(newName.trim());
-    setEditing(false);
-  };
-
-  return (
-    <motion.li
-      className="flex items-center justify-between p-4 bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-700/50 hover:shadow-md transition-all duration-300 group"
-      whileHover={{ scale: 1.02, y: -1 }}
-      whileTap={{ scale: 0.98 }}
-    >
-      <div className="flex items-center gap-3 w-full">
-        {/* Avatar */}
-        <motion.div 
-          className="relative"
-          whileHover={{ scale: 1.05 }}
-        >
-          <div
-            className="w-10 h-10 rounded-2xl text-white flex items-center justify-center font-bold shadow-lg"
-            style={{ 
-              background: `linear-gradient(135deg, ${user.color}30, ${user.color})`,
-              border: `2px solid ${user.color}40`
-            }}
-          >
-            <span className="text-sm drop-shadow-sm">{user.name.charAt(0).toUpperCase()}</span>
-          </div>
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.2, 1],
-              transition: { 
-                duration: 2, 
-                repeat: Infinity,
-                ease: "easeInOut" as const
-              }
-            }}
-            className="absolute -bottom-1 -right-1 w-3 h-3 bg-cyan-400 rounded-full border-2 border-slate-800 shadow-sm"
-          />
-        </motion.div>
-
-        {!editing ? (
-          <div className="flex justify-between w-full items-center">
-            <div className="truncate">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-slate-200 text-sm">
-                  {user.name}
-                  {user.id === OWNER_ID && (
-                    <span className="ml-1 px-2 py-0.5 bg-yellow-400 text-black rounded text-xs font-semibold">
-                      OWNER
-                    </span>
-                  )}
-                </span>
-                {isCurrent && (
-                  <motion.span
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="px-2 py-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs rounded-full font-medium"
-                  >
-                    You
-                  </motion.span>
-                )}
-              </div>
-              <p className="text-xs text-slate-400 mt-0.5">
-                {isCurrent ? "Online • Editing available" : "Active now"}
-              </p>
-            </div>
-
-            {isCurrent && (
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => setEditing(true)}
-                  className="w-8 h-8 hover:bg-cyan-500/20 hover:text-cyan-400 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity border-0"
-                >
-                  <Edit className="w-3 h-3" />
-                </Button>
-              </motion.div>
-            )}
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 w-full">
-            <Input
-              ref={inputRef}
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              className="h-8 text-sm rounded-xl border-2 border-cyan-500/50 focus:border-cyan-400 bg-slate-700/80 text-slate-200"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") saveEdit();
-                if (e.key === "Escape") setEditing(false);
-              }}
-            />
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => setEditing(false)}
-                className="h-8 w-8 hover:bg-red-500/20 hover:text-red-400 rounded-xl border-0"
-              >
-                <X className="w-3 h-3" />
-              </Button>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={saveEdit}
-                className="h-8 w-8 hover:bg-green-500/20 hover:text-green-400 rounded-xl border-0"
-              >
-                <Check className="w-3 h-3" />
-              </Button>
-            </motion.div>
-          </div>
-        )}
-      </div>
-    </motion.li>
-  );
-};
