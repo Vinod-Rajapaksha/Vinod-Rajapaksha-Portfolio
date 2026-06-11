@@ -5,6 +5,9 @@ import Hero from "./components/sections/Hero";
 import About from "./components/sections/About";
 import Tech from "./components/sections/Tech";
 import Projects from "./components/sections/Projects";
+import Leadership from "./components/sections/Leadership";
+import Thinking from './components/sections/Thinking';
+import Achievements from './components/sections/Achievements';
 import Contact from "./components/sections/Contact";
 import Preloader from "./components/preloader/preloader";
 import SmoothScroll from "./components/SmoothScroll";
@@ -22,6 +25,9 @@ function App() {
               <About />
               <Tech />
               <Projects />
+              <Leadership />
+              <Thinking />
+              <Achievements />
               <Contact />
             </main>
             <footer className="border-t border-slate-800 py-4 text-center text-xs text-slate-500">
