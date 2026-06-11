@@ -165,7 +165,8 @@ const Projects = () => {
   });
 
   return (
-    <section id="projects" className="bg-slate-950 text-slate-100 py-20">
+    <section id="projects" className="bg-slate-950 text-slate-100 py-20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,_rgba(56,189,248,0.12),_transparent_60%)]" />
       <div className="max-w-5xl mx-auto px-4">
         {/* Header */}
         <motion.div
