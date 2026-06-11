@@ -14,7 +14,7 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navItems = ["About", "Projects", "Contact"];
+  const navItems = ["About", "Projects", "Leadership", "Thinking", "Achievements"];
 
   return (
     <>
@@ -29,10 +29,10 @@ const Navbar: React.FC = () => {
           {/* Logo */}
           <a
             href="#home"
-            className="group relative font-semibold text-slate-100 text-lg z-60"
+            className="group relative font-bold text-slate-100 text-2xl z-60"
           >
             <span className="relative z-10 bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">
-              {"<"}Vinod Rajapaksha{"/>"}
+              {"<"} Vinod Rajapaksha {"/>"}
             </span>
           </a>
 
