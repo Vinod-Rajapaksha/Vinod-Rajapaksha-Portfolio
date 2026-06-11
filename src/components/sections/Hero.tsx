@@ -38,6 +38,8 @@ const Hero = () => {
 
   const indicatorOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
 
+  const experience = new Date().getFullYear() - 2018;
+
   return (
     <section
       id="home"
@@ -112,7 +114,7 @@ const Hero = () => {
             variants={itemVariants}
             className="flex justify-center lg:justify-start gap-4 md:gap-6 lg:gap-8 pt-2 md:pt-4 flex-wrap"
           >
-            {['5+ Years', '20+ Projects', '15+ Technologies', '4+ Frameworks'].map((stat, index) => (
+            {[`${experience}+ Years`, '20+ Projects', '15+ Technologies', '4+ Frameworks'].map((stat, index) => (
               <motion.div 
                 key={index} 
                 className="text-center"
