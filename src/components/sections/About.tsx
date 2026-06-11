@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { about } from "../../data/about";
 
 const About = () => {
   const [ref, inView] = useInView({
@@ -79,15 +80,11 @@ const About = () => {
           variants={containerVariants}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
-          className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start"
+          className="space-y-10"
         >
-          {/* Left: Content */}
+          {/* About Content */}
           <div className="space-y-6">
-            {[
-              "I'm <span class='text-cyan-400 font-semibold'>Vinod Rajapaksha</span>, a passionate Full-Stack Developer and Software Engineering undergraduate, driven by the challenge of turning ideas into real, functional digital products.",
-              "I specialize in building end-to-end solutions — from designing responsive, user-friendly interfaces to architecting efficient backend systems using modern technologies like MERN Stack, Spring Boot, and cloud deployment tools.",
-              "My project experience includes building scalable applications like Employee Management Systems and Food Ordering platforms, strengthening my expertise in REST APIs, database design, and deployment pipelines."
-            ].map((text, index) => (
+            {about.map((item, index) => (
               <motion.div
                 key={index}
                 variants={itemVariants}
@@ -99,8 +96,8 @@ const About = () => {
                 }}
               >
                 <p 
-                  className="text-slate-300 leading-relaxed text-base sm:text-lg"
-                  dangerouslySetInnerHTML={{ __html: text }}
+                  className="text-slate-300 leading-relaxed text-base sm:text-lg text-justify mx-4"
+                  dangerouslySetInnerHTML={{ __html: item }}
                 />
               </motion.div>
             ))}
@@ -114,7 +111,7 @@ const About = () => {
                 transition: { type: "spring", stiffness: 300 }
               }}
             >
-              <h3 className="text-lg font-semibold text-cyan-400 mb-3 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-cyan-400 mb-3 flex items-center gap-2 sm:text-xl">
                 <motion.span 
                   className="w-2 h-2 bg-cyan-400 rounded-full"
                   animate={{ scale: [1, 1.5, 1] }}
@@ -122,64 +119,74 @@ const About = () => {
                 ></motion.span>
                 My Mission
               </h3>
-              <p className="text-slate-200 text-sm sm:text-base">
-                Build impactful, efficient, and modern digital experiences that solve real-world problems through clean architecture and maintainable code.
+              <p className="text-slate-300 leading-relaxed text-base sm:text-lg text-justify mx-4">
+                Build impactful digital solutions that solve real-world problems through scalable architecture, clean engineering practices, and strong focus on user and business value.
               </p>
             </motion.div>
           </div>
 
-          {/* Right: Tech Stack & Skills */}
-          <div className="space-y-6">
-            {Object.entries(techStacks).map(([category, technologies], categoryIndex) => (
-              <motion.div 
-                key={category}
-                variants={itemVariants}
-                className="bg-slate-800/20 backdrop-blur-sm rounded-xl p-5 border border-slate-700/30 hover:border-slate-600/50 transition-all duration-300 group"
-                whileHover={{ 
-                  scale: 1.02,
-                  y: -5,
-                  transition: { type: "spring", stiffness: 300 }
-                }}
-              >
-                <h3 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                  <motion.span 
-                    className="w-2 h-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                  ></motion.span>
-                  {category}
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {technologies.map((tech, techIndex) => (
-                    <motion.span
-                      key={tech}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={inView ? { scale: 1, opacity: 1 } : {}}
-                      transition={{ 
-                        delay: categoryIndex * 0.1 + techIndex * 0.05,
-                        type: "spring",
-                        stiffness: 200
-                      }}
-                      className="px-3 py-2 text-sm rounded-lg bg-slate-900/50 border border-slate-700 hover:border-cyan-500/50 hover:text-cyan-400 transition-all duration-300 cursor-default"
-                      whileHover={{ 
-                        scale: 1.1,
-                        y: -2,
-                        transition: { type: "spring", stiffness: 400 }
-                      }}
-                    >
-                      {tech}
-                    </motion.span>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
+          {/* Tech Stack & Skills */}
+          <div className="mt-12">
+            <motion.h3
+              variants={itemVariants}
+              className="text-2xl sm:text-3xl font-bold mb-8 text-center"
+            >
+              <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                Skills & Technologies
+              </span>
+            </motion.h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {Object.entries(techStacks).map(([category, technologies], categoryIndex) => (
+                <motion.div 
+                  key={category}
+                  variants={itemVariants}
+                  className="bg-slate-800/20 backdrop-blur-sm rounded-xl p-5 border border-slate-700/30 hover:border-slate-600/50 transition-all duration-300"
+                  whileHover={{ 
+                    scale: 1.02,
+                    y: -5,
+                    transition: { type: "spring", stiffness: 300 }
+                  }}
+                >
+                  <h3 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
+                    <motion.span 
+                      className="w-2 h-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                    ></motion.span>
+                    {category}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {technologies.map((tech, techIndex) => (
+                      <motion.span
+                        key={tech}
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={inView ? { scale: 1, opacity: 1 } : {}}
+                        transition={{ 
+                          delay: categoryIndex * 0.1 + techIndex * 0.05,
+                          type: "spring",
+                          stiffness: 200
+                        }}
+                        className="px-3 py-2 text-sm rounded-lg bg-slate-900/50 border border-slate-700 hover:border-cyan-500/50 hover:text-cyan-400 transition-all duration-300 cursor-default"
+                        whileHover={{ 
+                          scale: 1.1,
+                          y: -2,
+                          transition: { type: "spring", stiffness: 400 }
+                        }}
+                      >
+                        {tech}
+                      </motion.span>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
 
             <motion.div 
               variants={itemVariants}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6"
+              className="grid grid-cols-2 sm:grid-cols-4 gap-8 mt-8"
             >
               {[
-                { number: "5+", label: "Years", color: "cyan" },
+                { number: `${new Date().getFullYear() - 2018}+`, label: "Years", color: "cyan" },
                 { number: "20+", label: "Projects", color: "blue" },
                 { number: "15+", label: "Technologies", color: "purple" },
                 { number: "4+", label: "Frameworks", color: "purple" }
