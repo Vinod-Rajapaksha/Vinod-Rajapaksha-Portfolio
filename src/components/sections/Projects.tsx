@@ -1,8 +1,12 @@
 import { motion } from "framer-motion";
 import { useInView } from 'react-intersection-observer';
+import { useState, useCallback, useEffect } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Tilt from "react-parallax-tilt";
 import { projects } from "../../data/projects";
 import { textVariant, fadeIn } from "../../utils/motion";
+import { useMediaQuery } from "../../hooks/use-media-query";
 import github from "../../assets/github.png"; 
 
 const ProjectCard = ({ project, index }: { project: typeof projects[0]; index: number }) => {
@@ -10,6 +14,8 @@ const ProjectCard = ({ project, index }: { project: typeof projects[0]; index: n
     threshold: 0.1,
     triggerOnce: true
   });
+  const [isExpanded, setIsExpanded] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <motion.div
@@ -20,12 +26,13 @@ const ProjectCard = ({ project, index }: { project: typeof projects[0]; index: n
       className="w-full h-full"
     >
       <Tilt
-        glareEnable
-        tiltEnable
-        tiltMaxAngleX={10}
-        tiltMaxAngleY={10}
+        glareEnable={!isMobile}
+        tiltEnable={!isMobile}
+        tiltMaxAngleX={8}
+        tiltMaxAngleY={8}
         glareColor="#22d3ee"
-        glareMaxOpacity={0.4}
+        glareMaxOpacity={0.2}
+        transitionSpeed={1500}
         className="w-full h-full"
       >
         <motion.article 
@@ -89,9 +96,25 @@ const ProjectCard = ({ project, index }: { project: typeof projects[0]; index: n
             </motion.div>
 
             {/* Description */}
-            <p className="text-sm text-slate-300 mb-4 leading-relaxed flex-grow line-clamp-3"> 
-              {project.description}
-            </p>
+            <div 
+              className="relative mb-4 flex-grow cursor-pointer group/desc"
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              <div 
+                className={`text-sm text-slate-300 leading-relaxed transition-all duration-300 ${
+                  isExpanded ? "" : "line-clamp-3 md:group-hover/desc:line-clamp-none"
+                }`}
+              >
+                {project.description}
+              </div>
+              <div 
+                className={`text-xs font-medium text-cyan-500 mt-2 transition-opacity duration-300 ${
+                  isExpanded ? "opacity-100 hidden md:block" : "opacity-70 md:opacity-0"
+                } md:hidden`}
+              >
+                {isExpanded ? "Show less" : "Tap to read more"}
+              </div>
+            </div>
 
             {/* Tech Tags */}
             <div className="flex flex-wrap gap-2 mb-4 text-xs flex-shrink-0"> 
@@ -164,63 +187,127 @@ const Projects = () => {
     triggerOnce: true
   });
 
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "start",
+    loop: true,
+    skipSnaps: false,
+  });
+
+  const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
+  const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  const onSelect = useCallback((emblaApi: any) => {
+    setPrevBtnDisabled(!emblaApi.canScrollPrev());
+    setNextBtnDisabled(!emblaApi.canScrollNext());
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect(emblaApi);
+    emblaApi.on("reInit", onSelect);
+    emblaApi.on("select", onSelect);
+  }, [emblaApi, onSelect]);
+
   return (
-    <section id="projects" className="bg-slate-950 text-slate-100 py-20 relative overflow-hidden">
+    <section id="projects" className="scroll-mt-20 bg-slate-950 text-slate-100 py-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,_rgba(56,189,248,0.12),_transparent_60%)]" />
-      <div className="max-w-5xl mx-auto px-4">
-        {/* Header */}
-        <motion.div
-          ref={ref}
-          variants={textVariant()}
-          initial="hidden"
-          animate={inView ? "show" : "hidden"}
-        >
-          <motion.p 
-            className="text-sm uppercase tracking-[0.25em] text-slate-400"
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 2, repeat: Infinity }}
+      <div className="max-w-5xl mx-auto px-4 relative z-10">
+        {/* Header & Controls Container */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
+          <div>
+            <motion.div
+              ref={ref}
+              variants={textVariant()}
+              initial="hidden"
+              animate={inView ? "show" : "hidden"}
+            >
+              <motion.p 
+                className="text-sm uppercase tracking-[0.25em] text-slate-400"
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                My Work
+              </motion.p>
+              <h2 className="text-2xl font-semibold mt-2 sm:text-3xl">
+                Projects
+              </h2>
+            </motion.div>
+
+            {/* Description */}
+            <motion.p
+              variants={fadeIn("", "", 0.1, 1)}
+              initial="hidden"
+              animate={inView ? "show" : "hidden"}
+              className="mt-4 max-w-2xl text-sm leading-relaxed text-slate-300"
+            >
+              A selection of projects I've built using modern technologies. 
+              Swipe or use the arrows to explore live demos and source code.
+            </motion.p>
+          </div>
+
+          {/* Side-by-Side Navigation Buttons */}
+          <motion.div 
+            variants={fadeIn("left", "spring", 0.3, 0.75)}
+            initial="hidden"
+            animate={inView ? "show" : "hidden"}
+            className="flex items-center gap-3 self-start sm:self-auto flex-shrink-0"
           >
-            My Work
-          </motion.p>
-          <h2 className="text-2xl font-semibold mt-2 sm:text-3xl">
-            Projects
-          </h2>
-        </motion.div>
+            <motion.button
+              onClick={scrollPrev}
+              disabled={prevBtnDisabled}
+              aria-label="Previous projects"
+              className={`p-3 rounded-xl border transition-all duration-300 backdrop-blur-sm flex items-center justify-center ${
+                prevBtnDisabled
+                  ? "bg-slate-900/40 border-slate-800/60 text-slate-600 cursor-not-allowed"
+                  : "bg-slate-900/80 border-slate-700 hover:border-cyan-500/60 hover:bg-slate-800 hover:text-cyan-400 text-slate-200 shadow-lg shadow-cyan-500/5 cursor-pointer"
+              }`}
+              whileHover={!prevBtnDisabled ? { scale: 1.05, x: -2 } : {}}
+              whileTap={!prevBtnDisabled ? { scale: 0.95 } : {}}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </motion.button>
 
-        {/* Description */}
-        <motion.p
-          variants={fadeIn("", "", 0.1, 1)}
-          initial="hidden"
-          animate={inView ? "show" : "hidden"}
-          className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-300 mb-10"
-        >
-          A selection of projects I've built using modern technologies. 
-          Each project includes live demos and source code.
-        </motion.p>
+            <motion.button
+              onClick={scrollNext}
+              disabled={nextBtnDisabled}
+              aria-label="Next projects"
+              className={`p-3 rounded-xl border transition-all duration-300 backdrop-blur-sm flex items-center justify-center ${
+                nextBtnDisabled
+                  ? "bg-slate-900/40 border-slate-800/60 text-slate-600 cursor-not-allowed"
+                  : "bg-slate-900/80 border-slate-700 hover:border-cyan-500/60 hover:bg-slate-800 hover:text-cyan-400 text-slate-200 shadow-lg shadow-cyan-500/5 cursor-pointer"
+              }`}
+              whileHover={!nextBtnDisabled ? { scale: 1.05, x: 2 } : {}}
+              whileTap={!nextBtnDisabled ? { scale: 0.95 } : {}}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </motion.button>
+          </motion.div>
+        </div>
 
-        {/* Projects Grid */}
-        <motion.div 
-          className="grid gap-6 md:grid-cols-2 auto-rows-fr"
-          variants={{
-            hidden: { opacity: 0 },
-            show: {
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.2
-              }
-            }
-          }}
-          initial="hidden"
-          animate={inView ? "show" : "hidden"}
-        >
-          {projects.map((project, index) => (
-            <ProjectCard
-              key={project.title}
-              project={project}
-              index={index}
-            />
-          ))}
-        </motion.div>
+        {/* Embla Carousel Viewport */}
+        <div className="overflow-hidden py-4 -my-4 cursor-grab active:cursor-grabbing" ref={emblaRef}>
+          <div className="flex -ml-6 select-none">
+            {projects.map((project, index) => (
+              <div
+                key={project.title}
+                className="flex-[0_0_100%] md:flex-[0_0_50%] min-w-0 pl-6"
+              >
+                <ProjectCard
+                  project={project}
+                  index={index}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

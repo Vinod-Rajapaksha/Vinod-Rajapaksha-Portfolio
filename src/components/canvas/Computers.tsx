@@ -1,11 +1,12 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Preload, useGLTF, Float } from "@react-three/drei";
+import { useInView } from "react-intersection-observer";
 
 import CanvasLoader from "../layout/Loader";
 
 const Computers: React.FC<{ isMobile: boolean }> = ({ isMobile }) => {
-  const computer = useGLTF("/desktop_pc/scene.gltf");
+  const computer = useGLTF("/src/assets/desktop_pc/scene.gltf");
 
   return (
     <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
@@ -35,6 +36,9 @@ const Computers: React.FC<{ isMobile: boolean }> = ({ isMobile }) => {
 const ComputersCanvas: React.FC = () => {
   const mediaQuery = window.matchMedia("(max-width: 768px)");
   const [isMobile, setIsMobile] = useState(mediaQuery.matches);
+  const [ref, inView] = useInView({
+    threshold: 0.1,
+  });
 
   useEffect(() => {
     const handler = (event: MediaQueryListEvent) => {
@@ -46,31 +50,34 @@ const ComputersCanvas: React.FC = () => {
   }, []);
 
   return (
-    <Canvas
-      frameloop="demand"
-      shadows
-      dpr={[1, 2]}
-      camera={{ position: [25, 3, 5], fov: 25 }}
-      gl={{
-        preserveDrawingBuffer: true,
-        alpha: true,
-        antialias: true,
-      }}
-      className="rounded-3xl"
-    >
-      <Suspense fallback={<CanvasLoader />}>
-        <OrbitControls
-          enablePan={false}
-          enableZoom={false}
-          maxPolarAngle={Math.PI / 2}
-          minPolarAngle={Math.PI / 2.5}
-          autoRotate
-          autoRotateSpeed={2}
-        />
-        <Computers isMobile={isMobile} />
-      </Suspense>
-      <Preload all />
-    </Canvas>
+    <div ref={ref} className="w-full h-full">
+      <Canvas
+        frameloop={inView ? "always" : "never"}
+        shadows={!isMobile}
+        dpr={[1, 1.5]}
+        camera={{ position: [25, 3, 5], fov: 25 }}
+        gl={{
+          preserveDrawingBuffer: true,
+          alpha: true,
+          antialias: true,
+          powerPreference: "high-performance",
+        }}
+        className="rounded-3xl"
+      >
+        <Suspense fallback={<CanvasLoader />}>
+          <OrbitControls
+            enablePan={false}
+            enableZoom={false}
+            maxPolarAngle={Math.PI / 2}
+            minPolarAngle={Math.PI / 2.5}
+            autoRotate
+            autoRotateSpeed={2}
+          />
+          <Computers isMobile={isMobile} />
+        </Suspense>
+        <Preload all />
+      </Canvas>
+    </div>
   );
 };
 

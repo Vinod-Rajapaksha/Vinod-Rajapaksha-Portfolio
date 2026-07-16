@@ -17,9 +17,25 @@ const SmoothScroll: React.FC<LenisProps> = ({
       duration: 2,         
       smoothWheel: true,
       easing: (t) => 1 - Math.pow(1 - t, 3), 
+      anchors: false,
     });
 
     lenisRef.current = lenis;
+
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a[href^="#"]') as HTMLAnchorElement | null;
+      if (!anchor) return;
+      const hash = anchor.getAttribute("href");
+      if (!hash || hash === "#") return;
+      const targetElement = document.querySelector(hash);
+      if (targetElement) {
+        e.preventDefault();
+        lenis.scrollTo(targetElement as HTMLElement, { offset: -80 });
+      }
+    };
+
+    document.addEventListener("click", handleAnchorClick);
 
     let frameId: number;
 
@@ -36,6 +52,7 @@ const SmoothScroll: React.FC<LenisProps> = ({
 
     // Cleanup on unmount
     return () => {
+      document.removeEventListener("click", handleAnchorClick);
       cancelAnimationFrame(frameId);
       lenis.destroy();
     };
