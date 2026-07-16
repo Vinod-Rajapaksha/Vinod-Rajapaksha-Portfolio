@@ -17,8 +17,9 @@ const ParticleBackground: React.FC = () => {
 
   useFrame((_state, delta) => {
     if (pointsRef.current) {
-      pointsRef.current.rotation.x -= delta / 10;
-      pointsRef.current.rotation.y -= delta / 15;
+      const safeDelta = Math.min(delta, 0.1);
+      pointsRef.current.rotation.x -= safeDelta / 10;
+      pointsRef.current.rotation.y -= safeDelta / 15;
     }
   });
 

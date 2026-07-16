@@ -23,7 +23,7 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'about', 'tech', 'projects', 'contact'];
+      const sections = ['home', 'about', 'tech', 'projects', 'leadership', 'thinking', 'achievements', 'contact'];
       const scrollPosition = window.scrollY + 100;
 
       for (const section of sections) {

@@ -1,11 +1,15 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { about } from "../../data/about";
+import { about, techStacks, aboutStats } from "../../data/about";
 
 const About = () => {
   const [ref, inView] = useInView({
     threshold: 0.1,
     triggerOnce: true
+  });
+
+  const [sectionRef, sectionInView] = useInView({
+    threshold: 0,
   });
 
   const containerVariants = {
@@ -31,15 +35,8 @@ const About = () => {
     }
   };
 
-  const techStacks = {
-    "Frontend": ["React", "TypeScript", "JavaScript", "Vite", "Tailwind CSS", "HTML/CSS"],
-    "Backend": ["Node.js", "Express.js", "Java", "Spring Boot", "Python", "Jakarta EE", "REST APIs"],
-    "Database": ["MongoDB", "Mongoose", "MSSQL", "MySQL", "PostgreSQL"],
-    "Tools": ["Docker", "Git/GitHub", "Postman", "Axios", "Figma"]
-  };
-
   return (
-    <section id="about" className="bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 text-slate-100 py-16 lg:py-24 relative overflow-hidden">
+    <section ref={sectionRef} id="about" className="scroll-mt-20 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 text-slate-100 py-16 lg:py-24 relative overflow-hidden">
       {/* Background Elements */}
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
@@ -114,7 +111,7 @@ const About = () => {
               <h3 className="text-lg font-semibold text-cyan-400 mb-3 flex items-center gap-2 sm:text-xl">
                 <motion.span 
                   className="w-2 h-2 bg-cyan-400 rounded-full"
-                  animate={{ scale: [1, 1.5, 1] }}
+                  animate={sectionInView ? { scale: [1, 1.5, 1] } : undefined}
                   transition={{ duration: 2, repeat: Infinity }}
                 ></motion.span>
                 My Mission
@@ -150,7 +147,7 @@ const About = () => {
                   <h3 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
                     <motion.span 
                       className="w-2 h-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
-                      animate={{ rotate: 360 }}
+                      animate={sectionInView ? { rotate: 360 } : undefined}
                       transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                     ></motion.span>
                     {category}
@@ -185,12 +182,7 @@ const About = () => {
               variants={itemVariants}
               className="grid grid-cols-2 sm:grid-cols-4 gap-8 mt-8"
             >
-              {[
-                { number: `${new Date().getFullYear() - 2018}+`, label: "Years", color: "cyan" },
-                { number: "20+", label: "Projects", color: "blue" },
-                { number: "15+", label: "Technologies", color: "purple" },
-                { number: "4+", label: "Frameworks", color: "purple" }
-              ].map((stat, index) => (
+              {aboutStats.map((stat, index) => (
                 <motion.div 
                   key={index}
                   className="text-center p-4 bg-slate-800/20 rounded-xl border border-slate-700/30 group"
@@ -199,13 +191,13 @@ const About = () => {
                     y: -5,
                     transition: { type: "spring", stiffness: 300 }
                   }}
-                  animate={{
+                  animate={sectionInView ? {
                     boxShadow: [
                       "0 0 0px rgba(34, 211, 238, 0)",
                       `0 0 20px rgba(${stat.color === 'cyan' ? '34, 211, 238' : stat.color === 'blue' ? '59, 130, 246' : '168, 85, 247'}, 0.3)`,
                       "0 0 0px rgba(34, 211, 238, 0)"
                     ]
-                  }}
+                  } : undefined}
                   transition={{
                     duration: 3,
                     delay: index * 0.5,

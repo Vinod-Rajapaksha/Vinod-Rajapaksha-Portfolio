@@ -1,6 +1,6 @@
 import { motion, type Variants, type Transition } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { Target, Code2, Users, BookOpen } from "lucide-react";
+import { leadershipItems } from "../../data/leadership";
 
 const Leadership = () => {
   const [ref, inView] = useInView({
@@ -33,31 +33,8 @@ const Leadership = () => {
     },
   };
 
-  const items = [
-    {
-      title: "Career Guidance",
-      desc: "Helping students understand career paths in software engineering, choosing technologies, and planning long-term growth.",
-      icon: Target,
-    },
-    {
-      title: "Technical Mentoring",
-      desc: "Assisting with coding problems, projects, system design, and real-world development practices.",
-      icon: Code2,
-    },
-    {
-      title: "Learning Communities",
-      desc: "Encouraging collaboration, peer learning, and participation in tech communities and group projects.",
-      icon: Users,
-    },
-    {
-      title: "Knowledge Sharing",
-      desc: "Sharing practical experience, project insights, and industry knowledge to help others grow faster.",
-      icon: BookOpen,
-    },
-  ];
-
   return (
-    <section id="leadership" className="bg-slate-950 text-slate-100 py-20 relative overflow-hidden">
+    <section id="leadership" className="scroll-mt-20 bg-slate-950 text-slate-100 py-20 relative overflow-hidden">
       {/* Top and bottom glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.12),_transparent_60%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,_rgba(59,130,246,0.12),_transparent_60%)]" />
@@ -90,7 +67,7 @@ const Leadership = () => {
 
         {/* Cards */}
         <div className="grid sm:grid-cols-2 gap-6">
-          {items.map((item) => {
+          {leadershipItems.map((item) => {
             const Icon = item.icon;
 
             return (

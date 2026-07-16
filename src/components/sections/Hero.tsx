@@ -3,11 +3,16 @@ import { useInView } from 'react-intersection-observer';
 import ComputersCanvas from "../canvas/Computers";
 import ParticleBackground from "../ParticleBackground";
 import { Canvas } from "@react-three/fiber";
+import { heroStats } from "../../data/hero";
 
 const Hero = () => {
   const [ref, inView] = useInView({
     threshold: 0.1,
     triggerOnce: true
+  });
+
+  const [sectionRef, sectionInView] = useInView({
+    threshold: 0,
   });
 
   const containerVariants = {
@@ -38,16 +43,20 @@ const Hero = () => {
 
   const indicatorOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
 
-  const experience = new Date().getFullYear() - 2018;
-
   return (
     <section
+      ref={sectionRef}
       id="home"
       className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 flex items-center relative overflow-hidden py-8"
     >
       {/* Particle Background */}
       <div className="absolute inset-0 -z-10">
-        <Canvas camera={{ position: [0, 0, 1] }}>
+        <Canvas
+          frameloop={sectionInView ? "always" : "never"}
+          dpr={[1, 1.5]}
+          gl={{ powerPreference: "high-performance", antialias: false }}
+          camera={{ position: [0, 0, 1] }}
+        >
           <ParticleBackground />
         </Canvas>
       </div>
@@ -114,7 +123,7 @@ const Hero = () => {
             variants={itemVariants}
             className="flex justify-center lg:justify-start gap-4 md:gap-6 lg:gap-8 pt-2 md:pt-4 flex-wrap"
           >
-            {[`${experience}+ Years`, '20+ Projects', '15+ Technologies', '4+ Frameworks'].map((stat, index) => (
+            {heroStats.map((stat, index) => (
               <motion.div 
                 key={index} 
                 className="text-center"
@@ -178,7 +187,7 @@ const Hero = () => {
       {/* Scroll Indicator */}
       <motion.div 
         style={{ opacity: indicatorOpacity }}
-        className="xs:bottom-10 absolute bottom-25 flex w-full items-center justify-center z-20"
+        className="xs:bottom-10 absolute bottom-15 flex w-full items-center justify-center z-20"
       >
         <a href="#about">
           <div className="border-cyan-400 flex h-[64px] w-[35px] items-start justify-center rounded-3xl border-4 p-2">

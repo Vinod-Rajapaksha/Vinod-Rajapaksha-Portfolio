@@ -7,5 +7,61 @@ export const about = [
 
     "Beyond development, I also focus on helping students improve their technical skills and career paths through guidance and knowledge sharing. I believe growth is not only personal, it should also help others grow."
 ];
+export const techStacks = {
+  "Frontend": [
+    "React.js",
+    "React Native",
+    "TypeScript",
+    "JavaScript",
+    "Angular",
+    "Tailwind CSS",
+    "Material UI",
+    "HTML5",
+    "CSS3",
+    "Vite"
+  ],
 
-           
+  "Backend": [
+    "Node.js",
+    "Express.js",
+    "Java",
+    "Spring Boot",
+    "Spring Security",
+    "REST APIs",
+    "JWT Authentication",
+    "Socket.IO",
+    "Jakarta EE",
+    "PHP"
+  ],
+
+  "Database & Cloud": [
+    "MongoDB",
+    "Mongoose",
+    "PostgreSQL",
+    "Microsoft SQL Server",
+    "MySQL",
+    "Cloudinary",
+    "Microsoft Azure",
+    "Firebase"
+  ],
+
+  "DevOps & Tools": [
+    "Docker",
+    "Git",
+    "GitHub Actions",
+    "CI/CD",
+    "Jest",
+    "Supertest",
+    "Swagger",
+    "Postman",
+    "Figma",
+    "cPanel"
+  ]
+};
+
+export const aboutStats = [
+  { number: `${new Date().getFullYear() - 2018}+`, label: "Years", color: "cyan" },
+  { number: "20+", label: "Projects", color: "blue" },
+  { number: "20+", label: "Technologies", color: "purple" },
+  { number: "8+", label: "Frameworks", color: "purple" }
+];
