@@ -6,7 +6,7 @@ import { useInView } from "react-intersection-observer";
 import CanvasLoader from "../layout/Loader";
 
 const Computers: React.FC<{ isMobile: boolean }> = ({ isMobile }) => {
-  const computer = useGLTF("/src/assets/desktop_pc/scene.gltf");
+  const computer = useGLTF("/desktop_pc/scene.gltf");
 
   return (
     <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>

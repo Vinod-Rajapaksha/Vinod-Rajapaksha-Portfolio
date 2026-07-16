@@ -1,3 +1,10 @@
+import ecoshine from "../assets/projects/ecoshine.png";
+import ceylonaTravels from "../assets/projects/ceylona-travels.png";
+import servex from "../assets/projects/servex.png";
+import visionroot from "../assets/projects/visionroot.png";
+import foodOrderingSystem from "../assets/projects/FoodOrderingSystem.png";
+import employeeManagementSystem from "../assets/projects/EmployeeManagementSystem.png";
+
 export const projects = [
   {
     title: "EcoShine – Smart Laundry Platform",
@@ -19,7 +26,7 @@ export const projects = [
     ],
     demoUrl: "https://ecoshinelaundry.vercel.app/",
     codeUrl: "https://github.com/Vinod-Rajapaksha/smart-laundry-platform",
-    image: "src/assets/projects/ecoshine.png",
+    image: ecoshine,
   },
   {
     title: "Ceylona Travels – Tourism & Travel Management System",
@@ -38,7 +45,7 @@ export const projects = [
     demoUrl: "https://ceylonatravels.vercel.app/",
     codeUrl:
       "https://github.com/Vinod-Rajapaksha/Tourism-and-Travel-Management-System",
-    image: "src/assets/projects/ceylona-travels.png",
+    image: ceylonaTravels,
   },
   {
     title: "ServeX – Smart Local Service Management",
@@ -58,7 +65,7 @@ export const projects = [
     ],
     demoUrl: "https://github.com/Vinod-Rajapaksha/ServeX",
     codeUrl: "https://github.com/Vinod-Rajapaksha/ServeX",
-    image: "src/assets/projects/servex.png",
+    image: servex,
   },
   {
     title: "VisionRoot – Corporate Website",
@@ -75,7 +82,7 @@ export const projects = [
     ],
     demoUrl: "http://visionroot.lk/",
     codeUrl: "http://visionroot.lk/",
-    image: "src/assets/projects/visionroot.png",
+    image: visionroot,
   },
   {
     title: "Food Ordering System",
@@ -84,7 +91,7 @@ export const projects = [
     tech: ["Java", "JSP", "Servlets", "Apache Tomcat", "MySQL", "JDBC"],
     demoUrl: "https://github.com/Vinod-Rajapaksha/Food-Ordering-System",
     codeUrl: "https://github.com/Vinod-Rajapaksha/Food-Ordering-System",
-    image: "src/assets/projects/FoodOrderingSystem.png",
+    image: foodOrderingSystem,
   },
   {
     title: "Employee Management System",
@@ -101,6 +108,6 @@ export const projects = [
     demoUrl:
       "https://www.linkedin.com/posts/vinod-rajapaksha_mern-fullstackdeveloper-reactjs-activity-7347814142122016768-1cX-?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEWTQhABlCL5huTssw4TKtfEz7DeRMoYJmo",
     codeUrl: "https://github.com/Vinod-Rajapaksha/Employee-Management-System",
-    image: "src/assets/projects/EmployeeManagementSystem.png",
+    image: employeeManagementSystem,
   },
 ];
